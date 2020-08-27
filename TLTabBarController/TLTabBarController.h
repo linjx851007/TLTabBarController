@@ -9,8 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "UITabBar+TLExtension.h"
 #import "UITabBarItem+TLExtension.h"
-
+@protocol TLTabBarControllerDelegate <NSObject>
+- (void)tabbarCtrlLogin;
+@end
 @interface TLTabBarController : UITabBarController
+@property(nonatomic, weak) id <TLTabBarControllerDelegate> tabbarCtrlDelegate;
 
 /**
  *  添加子控制器
@@ -29,4 +32,5 @@
  */
 - (void)addPlusItemWithSystemTabBarItem:(UITabBarItem *)systemTabBarItem actionBlock:(void (^)())actionBlock;
 
+- (void)reloadHeadInfo:(NSString*)headname img:(NSString*)img;
 @end

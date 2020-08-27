@@ -11,7 +11,12 @@
  */
 
 #import "UITabBar+TLExtension.h"
-
+#import "TabLoginInfo.h"
+@protocol TLTabBarDelegate <NSObject>
+- (void)touchTabLogin;
+@end
 @interface TLTabBar : UITabBar
-
+@property (nonatomic, strong) TabLoginInfo *loginHeader;
+@property(nonatomic, weak) id<TLTabBarDelegate>tabDelegate;
+- (void)p_resetTabBarItems;
 @end

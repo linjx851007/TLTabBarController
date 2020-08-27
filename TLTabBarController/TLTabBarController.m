@@ -85,7 +85,7 @@
 
 
 #pragma mark - ## TLTabBarController
-@interface TLTabBarController ()
+@interface TLTabBarController ()<TLTabBarDelegate>
 
 @property (nonatomic, strong) TLTabBarControllerDelegateEvent *delegateEvent;
 
@@ -99,6 +99,39 @@
     
     self.delegateEvent = [[TLTabBarControllerDelegateEvent alloc] initWithTabBarController:self];
     [self setValue:[TLTabBar new] forKey:@"tabBar"];
+    
+    TLTabBar *tabbar1 = (TLTabBar*)self.tabBar;
+    tabbar1.tabDelegate = self;
+    
+}
+- (void)touchTabLogin
+{
+    if (self.tabbarCtrlDelegate && [self.tabbarCtrlDelegate respondsToSelector:@selector(tabbarCtrlLogin)])
+    {
+        [self.tabbarCtrlDelegate performSelector:@selector(tabbarCtrlLogin) withObject:nil];
+    }
+}
+- (void)reloadHeadInfo:(NSString*)headname img:(NSString*)img
+{
+    TLTabBar *tabbar = (TLTabBar*)self.tabBar;
+    [tabbar.loginHeader reloadHeadInfo:headname img:img];
+}
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    TLTabBar *tabbar1 = (TLTabBar*)self.tabBar;
+    [tabbar1 p_resetTabBarItems];
+}
+-(BOOL)shouldAutorotate {
+    // 不想其子页面支持旋转，可直接返回 NO
+    return [self.selectedViewController shouldAutorotate];
+}
+-(NSUInteger)supportedInterfaceOrientations {
+    return [self.selectedViewController supportedInterfaceOrientations];
+}
+-(UIInterfaceOrientation) preferredInterfaceOrientationForPresentation
+{
+    return [self.selectedViewController preferredInterfaceOrientationForPresentation];
 }
 
 - (void)addChildViewController:(UIViewController *)viewController actionBlock:(BOOL (^)())actionBlock

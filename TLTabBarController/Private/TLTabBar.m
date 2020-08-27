@@ -10,11 +10,11 @@
 #import "UITabBarItem+TLPrivateExtension.h"
 
 #define     IS_IPAD         [[UIDevice currentDevice].model isEqualToString:@"iPad"]
-
-@interface TLTabBar ()
+#define cTabHeadWidth (160)
+#define cTabItemCount (3)
+@interface TLTabBar ()<TabLoginInfoDelegate>
 
 @property (nonatomic, strong, readonly) NSArray *barControlItems;
-
 @property (nonatomic, assign) UIEdgeInsets oldSafeAreaInsets;
 
 @end
@@ -29,7 +29,22 @@
     }
     return self;
 }
-
+- (void)touchLoginInfoButton
+{
+    if (self.tabDelegate && [self.tabDelegate respondsToSelector:@selector(touchTabLogin)])
+    {
+        [self.tabDelegate performSelector:@selector(touchTabLogin) withObject:nil];
+    }
+}
+- (TabLoginInfo *)loginHeader{
+    
+    if (_loginHeader==nil) {
+        _loginHeader = [[TabLoginInfo alloc] initWithFrame:CGRectMake(0, 0, cTabHeadWidth, self.bounds.size.height)];
+        _loginHeader.loginDelegate = self;
+        [self addSubview:self.loginHeader];
+    }
+    return _loginHeader;
+}
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -97,12 +112,19 @@
         return;
     }
     
-    for (int i = 0; i < self.items.count; i++) {
+    CGFloat orix = cTabHeadWidth;
+    CGFloat width = (self.bounds.size.width - orix)/cTabItemCount;
+    for (int i = 0; i < self.items.count; i++)
+    {
         UITabBarItem *item = self.items[i];
         UIControl *control = controlItems[i];
         [item setTabBarControl:control];
+        CGRect rect = control.frame;
+        rect.origin.x = i * width + orix;
+        rect.size.width = width;
+        control.frame = rect;
     }
-    
+    self.loginHeader.frame = CGRectMake(0, 0, cTabHeadWidth, self.frame.size.height);
     // 重置图片位置
     [self.items enumerateObjectsUsingBlock:^(UITabBarItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         UIEdgeInsets imageInsets = UIEdgeInsetsZero;
